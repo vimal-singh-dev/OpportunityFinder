@@ -1,6 +1,143 @@
+
 # ============================================
 # OPPORTUNITYFINDER AGENT
+# ============================================
 
+
+# ============================================
+# 1. INPUT VALIDATION FUNCTIONS
+# ============================================
+
+
+def get_required_text(message):
+    """
+    Ask the user for text.
+    The user cannot leave the field empty.
+    """
+
+    while True:
+
+        value = input(message).strip()
+
+        if value != "":
+            return value
+
+        print("This field cannot be empty. Please try again.")
+
+
+def get_number(message, minimum=0):
+    """
+    Ask the user for a number.
+    The number must be greater than or equal to minimum.
+    """
+
+    while True:
+
+        value = input(message).strip()
+
+        try:
+
+            number = float(value)
+
+            if number >= minimum:
+                return number
+
+            print(
+                f"Please enter a number greater than "
+                f"or equal to {minimum}."
+            )
+
+        except ValueError:
+
+            print("Please enter a valid number.")
+
+
+def get_yes_no(message):
+    """
+    Ask the user a yes/no question.
+    Returns True for yes and False for no.
+    """
+
+    while True:
+
+        value = input(message).strip().lower()
+
+        if value == "yes":
+            return True
+
+        elif value == "no":
+            return False
+
+        else:
+            print("Please enter yes or no.")
+
+
+def get_list(message):
+    """
+    Ask the user for comma-separated values.
+    Converts the input into a list.
+    """
+
+    while True:
+
+        value = input(message).strip()
+
+        if value != "":
+
+            items = [
+                item.strip()
+                for item in value.split(",")
+                if item.strip() != ""
+            ]
+
+            if len(items) > 0:
+                return items
+
+        print(
+            "Please enter at least one value."
+        )
+
+
+def get_job_types():
+    """
+    Ask the user which types of opportunities
+    they are interested in.
+    """
+
+    while True:
+
+        print("\nWhat type of opportunities are you looking for?")
+
+        print("1. Internship")
+        print("2. Full-time")
+        print("3. Both")
+
+        choice = input("Choose 1, 2, or 3: ").strip()
+
+        if choice == "1":
+
+            return ["internship"]
+
+        elif choice == "2":
+
+            return ["full-time"]
+
+        elif choice == "3":
+
+            return [
+                "internship",
+                "full-time"
+            ]
+
+        else:
+
+            print(
+                "Invalid choice. Please choose 1, 2, or 3."
+            )
+
+
+# ============================================
+# 2. PROGRAM START
 # ============================================
 
 
@@ -12,183 +149,131 @@ print("\nLet's create your profile.\n")
 
 
 # ============================================
-# 1. PERSONAL INFORMATION
+# 3. PERSONAL INFORMATION
 # ============================================
 
 print("---------- PERSONAL INFORMATION ----------")
 
-name = input("Name: ")
-email = input("Email: ")
-phone = input("Phone: ")
+name = get_required_text("Name: ")
+
+email = get_required_text("Email: ")
+
+phone = get_required_text("Phone: ")
 
 
 # ============================================
-# 2. EDUCATION
+# 4. EDUCATION
 # ============================================
 
 print("\n---------- EDUCATION ----------")
 
-degree = input("Degree: ")
-field = input("Field / Branch: ")
-university = input("University: ")
-graduation_year = input("Graduation year: ")
+degree = get_required_text("Degree: ")
+
+field = get_required_text("Field / Branch: ")
+
+university = get_required_text("University: ")
+
+graduation_year = get_number(
+    "Graduation year: ",
+    minimum=1900
+)
 
 
 # ============================================
-# 3. CAREER INFORMATION
+# 5. CAREER INFORMATION
 # ============================================
 
 print("\n---------- CAREER INFORMATION ----------")
 
-skills_input = input(
+skills = get_list(
     "Skills (separate with commas): "
 )
 
-skills = [
-    skill.strip()
-    for skill in skills_input.split(",")
-]
-
-
-experience = input(
+experience = get_required_text(
     "Experience (if none, enter 'Fresher'): "
 )
 
-
-roles_input = input(
+preferred_roles = get_list(
     "Preferred job roles (separate with commas): "
 )
 
-preferred_roles = [
-    role.strip()
-    for role in roles_input.split(",")
-]
+
+# ============================================
+# 6. JOB TYPE CONSTRAINT
+# ============================================
+
+job_types = get_job_types()
 
 
 # ============================================
-# 4. JOB TYPE CONSTRAINT
-# ============================================
-
-print("\n---------- JOB TYPE ----------")
-
-print("1. Internship")
-print("2. Full-time")
-print("3. Both")
-
-job_type_choice = input(
-    "Choose 1, 2, or 3: "
-)
-
-if job_type_choice == "1":
-
-    job_types = ["internship"]
-
-elif job_type_choice == "2":
-
-    job_types = ["full-time"]
-
-elif job_type_choice == "3":
-
-    job_types = [
-        "internship",
-        "full-time"
-    ]
-
-else:
-
-    print("Invalid choice. No job type selected.")
-
-    job_types = []
-
-
-# ============================================
-# 5. LOCATION CONSTRAINT
+# 7. LOCATION CONSTRAINT
 # ============================================
 
 print("\n---------- LOCATION PREFERENCES ----------")
 
-locations_input = input(
+preferred_locations = get_list(
     "Preferred locations (separate with commas): "
 )
 
-preferred_locations = [
-    location.strip()
-    for location in locations_input.split(",")
-]
-
-
-remote_input = input(
+remote_allowed = get_yes_no(
     "Are you open to remote opportunities? (yes/no): "
 )
 
-remote_allowed = (
-    remote_input.lower() == "yes"
-)
-
-
-max_distance = input(
-    "Maximum distance you're willing to travel (km): "
+max_distance_km = get_number(
+    "Maximum distance you're willing to travel (km): ",
+    minimum=0
 )
 
 
 # ============================================
-# 6. COMPENSATION CONSTRAINTS
+# 8. COMPENSATION CONSTRAINTS
 # ============================================
 
 print("\n---------- COMPENSATION ----------")
 
-minimum_stipend = input(
-    "Minimum acceptable internship stipend: "
+minimum_stipend = get_number(
+    "Minimum acceptable internship stipend: ",
+    minimum=0
 )
 
-minimum_salary = input(
-    "Minimum acceptable annual salary: "
+minimum_salary = get_number(
+    "Minimum acceptable annual salary: ",
+    minimum=0
 )
 
 
 # ============================================
-# 7. SKILL-GAP OPPORTUNITY CONSTRAINT
+# 9. SKILL-GAP OPPORTUNITIES
 # ============================================
 
 print("\n---------- SKILL-GAP OPPORTUNITIES ----------")
 
-skill_gap_input = input(
+allow_skill_gap = get_yes_no(
     "Should I show opportunities where you "
     "are missing some skills? (yes/no): "
 )
 
-allow_skill_gap = (
-    skill_gap_input.lower() == "yes"
-)
-
 
 # ============================================
-# 8. APPLICATION CONSTRAINT
+# 10. APPLICATION SETTINGS
 # ============================================
 
 print("\n---------- APPLICATION SETTINGS ----------")
 
-approval_input = input(
+require_approval = get_yes_no(
     "Require your approval before submitting "
     "an application? (yes/no): "
 )
 
-require_approval = (
-    approval_input.lower() == "yes"
+
+max_applications_per_day = get_number(
+    "Maximum applications per day: ",
+    minimum=1
 )
 
 
 # ============================================
-# 9. MAXIMUM APPLICATIONS PER DAY
-# ============================================
-
-max_applications = input(
-    "Maximum applications per day: "
-)
-
-
-# ============================================
-# 10. CREATE USER PROFILE
+# 11. CREATE USER PROFILE
 # ============================================
 
 user_profile = {
@@ -236,7 +321,7 @@ user_profile = {
 
             "remote_allowed": remote_allowed,
 
-            "max_distance_km": max_distance
+            "max_distance_km": max_distance_km
         },
 
 
@@ -258,14 +343,15 @@ user_profile = {
 
             "require_approval": require_approval,
 
-            "max_applications_per_day": max_applications
+            "max_applications_per_day":
+                max_applications_per_day
         }
     }
 }
 
 
 # ============================================
-# 11. DISPLAY USER PROFILE
+# 12. DISPLAY PROFILE
 # ============================================
 
 print("\n")
@@ -342,43 +428,59 @@ print(
 
 print(
     "Preferred Locations:",
-    user_profile["constraints"]["location"]["preferred_locations"]
+    user_profile["constraints"]
+    ["location"]
+    ["preferred_locations"]
 )
 
 print(
     "Remote Allowed:",
-    user_profile["constraints"]["location"]["remote_allowed"]
+    user_profile["constraints"]
+    ["location"]
+    ["remote_allowed"]
 )
 
 print(
     "Maximum Distance:",
-    user_profile["constraints"]["location"]["max_distance_km"],
+    user_profile["constraints"]
+    ["location"]
+    ["max_distance_km"],
     "km"
 )
 
 print(
     "Minimum Stipend:",
-    user_profile["constraints"]["compensation"]["minimum_stipend"]
+    user_profile["constraints"]
+    ["compensation"]
+    ["minimum_stipend"]
 )
 
 print(
     "Minimum Salary:",
-    user_profile["constraints"]["compensation"]["minimum_salary"]
+    user_profile["constraints"]
+    ["compensation"]
+    ["minimum_salary"]
 )
 
 print(
     "Skill-Gap Opportunities:",
-    user_profile["constraints"]["skill_gap"]["allowed"]
+    user_profile["constraints"]
+    ["skill_gap"]
+    ["allowed"]
 )
 
 print(
     "Application Approval Required:",
-    user_profile["constraints"]["application"]["require_approval"]
+    user_profile["constraints"]
+    ["application"]
+    ["require_approval"]
 )
 
 print(
     "Maximum Applications Per Day:",
-    user_profile["constraints"]["application"]["max_applications_per_day"]
+    user_profile["constraints"]
+    ["application"]
+    ["max_applications_per_day"]
 )
 
 
